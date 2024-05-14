@@ -1,5 +1,6 @@
 #include <Application/Application.hpp>
 #include <Application/CommandLine.hpp>
+#include <Application/Commandlet.hpp>
 #include <Common/Platform.hpp>
 #include <Client/Client.hpp>
 #include <Engine/Engine.hpp>
@@ -50,17 +51,16 @@ public:
 	IntegerType DeltaTimeIndex = 0u;
 };
 
-
-
 Application::Application( const int a_ArgC, const char** a_ArgV, const char* a_Name )
 	: m_QuitRequested( false )
 	, m_Name( a_Name )
 	, m_LogsFolder( "." )
 	, m_ArgC( a_ArgC )
 	, m_ArgV( a_ArgV )
-{
-
-}
+#if IS_EDITOR
+	, m_IsCommandlet( false )
+#endif
+{}
 
 int Application::Run()
 {
@@ -72,6 +72,15 @@ int Application::Run()
 
 	// Override configs if commandline asks for it.
 	CommandLine::Construct( m_ArgC, m_ArgV );
+
+	// If the above commandline invoked a commandlet, return after this.
+#if IS_EDITOR
+	if ( IsCommandlet() )
+	{
+		TODO( "Make this return something meaninful considering Run reports directly out of int main(...)." );
+		return 0;
+	}
+#endif
 
 	// Create the engine.
 	m_Engine = make_shared< Engine >( this );

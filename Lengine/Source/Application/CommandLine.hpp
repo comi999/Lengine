@@ -3,7 +3,7 @@
 #include <Utility/CommandLineParser.hpp>
 #include <Utility/Singleton.hpp>
 
-struct ApplicationCommandLineParser : private ISingleton< ApplicationCommandLineParser >, protected CommandLineParser
+class ApplicationCommandLineParser : private ISingleton< ApplicationCommandLineParser >, protected CommandLineParser
 {
 	friend class Application;
 	friend class ISingleton;

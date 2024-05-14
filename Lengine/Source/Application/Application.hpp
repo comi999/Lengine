@@ -31,6 +31,11 @@ using std::shared_ptr;
 
 class Application : public ISingleton< Application >
 {
+private:
+
+	friend class ApplicationCommandLineParser;
+	friend class CommandletCommandLineParser;
+
 public:
 
 	Application( const int32_t a_ArgC, const char** a_ArgV, const char* a_Name = APPLICATION_NAME );
@@ -76,6 +81,11 @@ private:
 	int32_t m_ArgC;
 	const char** m_ArgV;
 
+#if IS_EDITOR
+	bool m_IsCommandlet;
+	string m_CommandletName;
+#endif
+
 public:
 
 	static Application& GetApplication() { return *This; }
@@ -85,4 +95,8 @@ public:
 	static const Path& GetEngineConfigsFolder() { return This->m_EngineConfigsFolder; }
 	static const Path& GetApplicationConfigsFolder() { return This->m_ApplicationConfigsFolder; }
 	static const Path& GetApplicationLogsFolder() { return This->m_LogsFolder; }
+
+#if IS_EDITOR
+	static bool IsCommandlet() { return This->m_IsCommandlet; }
+#endif
 };

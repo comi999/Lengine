@@ -1,12 +1,21 @@
+#include <Application/Application.hpp>
 #include <Application/CommandLine.hpp>
+#include <Application/Commandlet.hpp>
 
+#if IS_EDITOR
 struct CommandletCommandLineParser : public CommandLineParser
 {
 	CommandletCommandLineParser()
 	{
-		OnOption( "run", []( const CommandLineArgument<>& arg)
+		OnOption( "run", [ this ]( const CommandLineArgument< string >& arg)
 		{
-			std::cout << "Running commandlet: " << arg.Value << std::endl;
+			if ( Commandlet* Found = Commandlet::GetCommandlet( arg.Value ) )
+			{
+				Application::Get()->m_IsCommandlet = true;
+				Application::Get()->m_CommandletName = Found->GetName();
+				Found->Run( arg.ArgC, arg.ArgV );
+				Abort();
+			}
 		} );
 
 		OnPositional( 1u, []( const CommandLineArgument<>& arg )
@@ -15,14 +24,17 @@ struct CommandletCommandLineParser : public CommandLineParser
 		} );
 	}
 };
+#endif
 
 ApplicationCommandLineParser::ApplicationCommandLineParser( const int32_t a_ArgC, const char** a_ArgV )
 {
-	OnOption( "run", []( const CommandLineArgument<>& a_Argument )
+#if IS_EDITOR
+	OnOption( "run", [ this ]( const CommandLineArgument<>& a_Argument )
 	{
 		// If "-run=commandlet", then pass this off to the Commandlet CommandLine parser to handle.
 		CommandletCommandLineParser Parser;
 		Parser.Run( a_Argument.ArgC, a_Argument.ArgV );
+		Abort();
 	} );
 
 	OnFlag( "help", [ this ]( const CommandLineArgument<>& a_Argument )
@@ -30,7 +42,7 @@ ApplicationCommandLineParser::ApplicationCommandLineParser( const int32_t a_ArgC
 		Abort();
 		RunHelp();
 	} );
-
+#endif
 	// ... and so on.
 
 	Run( a_ArgC, a_ArgV );
