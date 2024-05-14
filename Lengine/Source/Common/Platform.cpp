@@ -1,6 +1,7 @@
 #include <Common/Platform.hpp>
 #include <ctime>
 #include <chrono>
+#include <iostream>
 
 DateTime Platform::GetDateTime()
 {
@@ -34,4 +35,9 @@ void DateTime::Format( char* a_Buffer, const size_t a_BufferLength, const char* 
 	Input.tm_mon = a_DateTime.Month;
 	Input.tm_year = a_DateTime.Year + ( PLATFORM_TIME_START_YEAR - 1900 );
 	( void )strftime( a_Buffer, a_BufferLength * sizeof( char ), a_FormatString, &Input );
+}
+
+void Platform::Print( const string_view a_String )
+{
+	std::cout << a_String;
 }

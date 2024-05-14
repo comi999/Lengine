@@ -29,7 +29,7 @@ void RHITexture::Bind()
 ////}
 ////else
 //{
-//    //std::cout << "Failed to load texture" << std::endl;
+//    Platform::Print( "Failed to load texture\n" );
 //}
 //stbi_image_free(data);
 }

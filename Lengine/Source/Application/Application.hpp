@@ -33,8 +33,8 @@ class Application : public ISingleton< Application >
 {
 private:
 
-	friend class ApplicationCommandLineParser;
-	friend class CommandletCommandLineParser;
+	friend struct ApplicationCommandLineParser;
+	friend struct CommandletCommandLineParser;
 
 public:
 

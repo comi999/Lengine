@@ -1,9 +1,8 @@
 #pragma once
-#include <iostream>
 #include <Utility/CommandLineParser.hpp>
 #include <Utility/Singleton.hpp>
 
-class ApplicationCommandLineParser : private ISingleton< ApplicationCommandLineParser >, protected CommandLineParser
+struct ApplicationCommandLineParser : private ISingleton< ApplicationCommandLineParser >, protected CommandLineParser
 {
 	friend class Application;
 	friend class ISingleton;

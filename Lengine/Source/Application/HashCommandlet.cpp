@@ -20,7 +20,7 @@ struct HashCommandLineParser : CommandLineParser
 
 void HashCommandlet::Run( const int32_t a_ArgC, const char** a_ArgV )
 {
-	HashCommandLineParser Parser;
+	static HashCommandLineParser Parser;
 	Parser.Run( a_ArgC, a_ArgV );
 }
 #endif

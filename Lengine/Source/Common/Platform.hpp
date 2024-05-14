@@ -1,8 +1,11 @@
 #pragma once
 #include <cstdint>
+#include <string>
 
 #define PLATFORM_TIME_START_YEAR 2024
 #define PLATFORM_MAX_PATH_LENGTH 256
+
+using std::string_view;
 
 struct DateTime
 {
@@ -23,4 +26,7 @@ public:
 	Platform() = delete;
 	static DateTime GetDateTime();
 	static uint64_t GetEpochTime();
+	static void Print( const string_view a_String );
+
+	TODO( "Can we add a Console::WriteLine sort of thing here?" );
 };

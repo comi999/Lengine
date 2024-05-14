@@ -26,6 +26,8 @@ using std::make_shared;
 
 class Commandlet
 {
+	friend struct CommandletCommandLineParser;
+
 public:
 
 	Commandlet( const string& a_Name )
