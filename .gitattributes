@@ -1,4 +1,1 @@
-LengineCore/Dependencies/assimp/lib/ReleaseClient_Win64/assimp.lib filter=lfs diff=lfs merge=lfs -text
-LengineCore/Dependencies/assimp/lib/DebugClient_Win64/assimpd.lib filter=lfs diff=lfs merge=lfs -text
-LengineCore/Dependencies/assimp/lib/ReleaseEditor_Win64/assimp.lib filter=lfs diff=lfs merge=lfs -text
-LengineCore/Dependencies/assimp/lib/DebugEditor_Win64/assimpd.lib filter=lfs diff=lfs merge=lfs -text
+Lengine/Dependencies/*/lib/** filter=lfs diff=lfs merge=lfs -text

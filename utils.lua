@@ -272,12 +272,21 @@ function add_dependencies(root, dependencies, headers_only)
 	filter{}
 end
 
-function CreateLengineApp(app_name, apps_path)
-	local source_folder_lengine = "LengineCore/Source"
-	local dependencies_folder_lengine = "LengineCore/Dependencies"
-	local app_path = path.join(apps_path, app_name)
-	local app_resources_path = path.join("..", path.join(app_path, "Content"))
-	local dependencies_lengine_app = {
+function create_app(name, apps_folder, engine_folder)
+
+	local lengine_source_folder = path.join(engine_folder, "Source")
+	local lengine_dependencies_folder = path.join(engine_folder, "Dependencies")
+	local lengine_resources_folder = path.join(engine_folder, "Resources")
+	local lengine_configs_folder = path.join(engine_folder, "Configs")
+	
+	local app_folder = path.join(apps_folder, name)
+	local app_source_folder = path.join(app_folder, "Source")
+	local app_resources_folder = path.join(app_folder, "Resources")
+	local app_configs_folder = path.join(app_folder, "Configs")
+	
+	local logs_folder = path.join(apps_folder, "../Generated/Logs")
+	
+	local app_dependencies = {
 		"assimp",
 		"fmod",
 		"glew",
@@ -287,81 +296,105 @@ function CreateLengineApp(app_name, apps_path)
 		"json",
 		"lua",
 		"luabridge",
+		"mini",
 		"stb_image",
 	}
 	
-	project(app_name)
-		location "Generated/Project"
-		kind "ConsoleApp"
-		language "C++"
-		cppdialect "C++20"
-		toolset "v143"
-		links { "LengineCore" }
-		dependson { "LengineCore" }
-		includedirs { source_folder_lengine, app_path }
-		forceincludes { "LengineCore/Source/Common/Common.hpp" }
-		add_dependencies(dependencies_folder_lengine, dependencies_lengine_app, true)
+	project(name)
+	location "Generated/Project"
+	kind "ConsoleApp"
+	language "C++"
+	cppdialect "C++20"
+	toolset "v143"
+	links { "Lengine" }
+	dependson { "Lengine" }
+	includedirs { lengine_source_folder, app_source_folder }
+	forceincludes { path.join(lengine_source_folder, "Common/Common.hpp") }
+	add_dependencies(lengine_dependencies_folder, app_dependencies, true)
+	
+	files {
+		path.join(app_source_folder, "**.h"),
+		path.join(app_source_folder, "../**.hpp"),
+		path.join(app_source_folder, "**.inl"),
+		path.join(app_source_folder, "**.c"),
+		path.join(app_source_folder, "**.cpp"),
+		path.join(app_source_folder, "**.natvis"),
+		path.join(app_configs_folder, "**.ini"),
+	}
+	
+	prebuildcommands {
+	}
+	
+	local APPLICATION_NAME = string.format("APPLICATION_NAME=\"%s\"", name)
+	local EDITOR_APPLICATION_NAME = string.format("APPLICATION_NAME=\"%s Editor\"", name)
+	local ENGINE_NAME = "ENGINE_NAME=\"Lengine\""
+	local PATH_LOGS = string.format("PATH_LOGS=\"%s\"", logs_folder)
+	local PATH_ENGINE_CONFIGS = string.format("PATH_ENGINE_CONFIGS=\"%s\"", lengine_configs_folder)
+	local PATH_CONFIGS = string.format("PATH_CONFIGS=\"%s\"", app_configs_folder)
+	local PATH_ENGINE_RESOURCES = string.format("PATH_ENGINE_RESOURCES=\"%s\"", lengine_resources_folder)
+	local PATH_RESOURCES = string.format("PATH_RESOURCES=\"%s\"", app_resources_folder)
+	local IMPLEMENTATION_RENDERING = "IMPLEMENTATION_RENDERING=BACKEND_OPENGL"
+	local IMPLEMENTATION_AUDIO = "IMPLEMENTATION_AUDIO=BACKEND_FMOD"
+	local IMPLEMENTATION_PHYSICS = "IMPLEMENTATION_PHYSICS=BACKEND_PHYSX"
+	
+	defines {
+		"IS_EXE",
+		"_CRT_SECURE_NO_WARNINGS",
 		
-		files {
-			path.join(app_path, "**.h"),
-			path.join(app_path, "**.hpp"),
-			path.join(app_path, "**.inl"),
-			path.join(app_path, "**.c"),
-			path.join(app_path, "**.cpp"),
-			path.join(app_path, "**.natvis"),
-		}
-		
-		prebuildcommands {
-		}
-		
+		ENGINE_NAME,
+		PATH_LOGS,
+		PATH_ENGINE_CONFIGS,
+		PATH_CONFIGS,
+		PATH_ENGINE_RESOURCES,
+		PATH_RESOURCES,
+		IMPLEMENTATION_RENDERING,
+		IMPLEMENTATION_AUDIO,
+		-- IMPLEMENTATION_PHYSICS
+	}
+	
+	filter "configurations:DebugEditor"
+		symbols "On"
 		defines {
-			"IS_EXE",
-			"_CRT_SECURE_NO_WARNINGS",
-			string.format("APPLICATION_NAME=\"%s\"", app_name),
-			string.format("PATH_RESOURCES=\"%s\"", app_resources_path),
-			"PATH_LOGS=\"../Logs\"",
-			"PATH_CONFIGS=\"../Configs\"",
+			"CONFIG_DEBUG",
+			"IS_EDITOR",
+			"LOGGING_LEVEL=1",
+			"ENABLE_MESSAGES",
+			EDITOR_APPLICATION_NAME,
+		}
+	
+	filter "configurations:ReleaseEditor"
+		optimize "On"
+		defines {
+			"CONFIG_RELEASE",
+			"IS_EDITOR",
+			"LOGGING_LEVEL=1",
+			"ENABLE_MESSAGES",
+			EDITOR_APPLICATION_NAME,
 		}
 		
-		filter "configurations:DebugEditor"
-			symbols "On"
-			defines {
-				"CONFIG_DEBUG",
-				"IS_EDITOR",
-				"LOGGING_LEVEL=1",
-				"ENABLE_MESSAGES",
-			}
+	filter "configurations:DebugClient"
+		symbols "On"
+		defines {
+			"CONFIG_DEBUG",
+			"IS_CLIENT",
+			"LOGGING_LEVEL=1",
+			"ENABLE_MESSAGES",
+			APPLICATION_NAME,
+		}
 	
-		filter "configurations:ReleaseEditor"
-			optimize "On"
-			defines {
-				"CONFIG_RELEASE",
-				"IS_EDITOR",
-				"LOGGING_LEVEL=1",
-				"ENABLE_MESSAGES",
-			}
-			
-		filter "configurations:DebugClient"
-			symbols "On"
-			defines {
-				"CONFIG_DEBUG",
-				"IS_CLIENT",
-				"LOGGING_LEVEL=1",
-				"ENABLE_MESSAGES",
-			}
+	filter "configurations:ReleaseClient"
+		optimize "On"
+		defines {
+			"CONFIG_RELEASE",
+			"IS_CLIENT",
+			"LOGGING_LEVEL=3",
+			APPLICATION_NAME,
+		}
 	
-		filter "configurations:ReleaseClient"
-			optimize "On"
-			defines {
-				"CONFIG_RELEASE",
-				"IS_CLIENT",
-				"LOGGING_LEVEL=3"
-			}
-	
-		filter "platforms:Win64"
-			architecture "x86_64"
-			links { "opengl32.lib" }
-			defines {
-				"PLATFORM_WIN64"
-			}	
+	filter "platforms:Win64"
+		architecture "x86_64"
+		links { "opengl32.lib" }
+		defines {
+			"PLATFORM_WIN64"
+		}	
 end

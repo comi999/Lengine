@@ -9,7 +9,7 @@ Running GenerateProjectFiles.bat will then produce a project and solution file c
 It uses Premake5 to generate the project, and that is supplied in the project, so no need to install Premake5 if you don't already
 have it.
 
-In your Application folder, you can create a Content folder to store all of your Content files inside. This will automatically be linked
+In your Application folder, you can create a Resources folder to store all of your resource files inside. This will automatically be linked
 via a proprocessor define.
 
 Using CleanProjectFiles.bat will clear the .vs files, the Generated/Project files and the Lengine.sln.
