@@ -1,4 +1,6 @@
 #include <ExampleApplication.hpp>
+#include <Utility/Delegate.hpp>
+#include <iostream>
 
 void ExampleApplication::OnCreate()
 {

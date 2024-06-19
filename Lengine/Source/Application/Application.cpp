@@ -93,7 +93,7 @@ int Application::Run()
 #endif
 
 	// Call OnCreate for the application first.
-	OnCreate();
+	this->OnCreate();
 
 #if IS_EDITOR
 	// Call OnCreate for the editor second if this is an editor build.

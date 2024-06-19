@@ -7,7 +7,7 @@
 #define DEFINE_APPLICATION_MAIN( Name ) \
 	int main( const int32_t a_ArgC, const char** a_ArgV ) \
 	{ \
-		Name::Construct( a_ArgC, a_ArgV ); \
+		Name::BindExisting( new Name( a_ArgC, a_ArgV ) ); \
 		return Name::Get()->Run(); \
 	}
 

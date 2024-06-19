@@ -7,6 +7,8 @@ public:
 
 	DEFINE_APPLICATION_BODY( ExampleApplication );
 
+	~ExampleApplication() {}
+
 	void OnCreate() override;
 	void OnDestroy() override;
 	void OnUpdate( const float a_DeltaTime ) override;

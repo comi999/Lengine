@@ -1,5 +1,9 @@
 #pragma once
 #include <type_traits>
+#include <memory>
+
+using std::shared_ptr;
+using std::make_shared;
 
 //==========================================================================
 // Singleton class for single-instance objects. If ExplicitInitialisation is
@@ -36,7 +40,7 @@ public:
             return false;
         }
 
-        s_Instance = new T( std::forward< Args >( a_Args )... );
+        s_Instance = make_shared< T >( std::forward< Args >( a_Args )... );
         s_Instance->OnPostSingletonConstructed();
         return true;
     }
@@ -51,7 +55,7 @@ public:
             return false;
         }
 
-        s_Instance = a_Instance;
+        s_Instance = shared_ptr< T >( a_Instance );
         s_Instance->OnPostSingletonConstructed();
         return true;
     }
@@ -78,7 +82,6 @@ public:
             return;
         }
 
-        delete s_Instance;
         s_Instance = nullptr;
     }
 
@@ -100,7 +103,7 @@ public:
 		}
 
 		CHECK( IsValid() );
-		return s_Instance;
+		return s_Instance.get();
 	}
 
     //======================================================================
@@ -114,12 +117,12 @@ public:
 private:
 
     //======================================================================
-    static T* s_Instance;
+    static shared_ptr< T > s_Instance;
 };
 
 //==========================================================================
 template< typename T, bool _ExplicitInitialisation >
-T* ISingleton< T, _ExplicitInitialisation >::s_Instance = nullptr;
+shared_ptr< T > ISingleton< T, _ExplicitInitialisation >::s_Instance = nullptr;
 
 template< typename T, bool _ExplicitInitialisation >
 typename ISingleton< T, _ExplicitInitialisation >::Access ISingleton< T, _ExplicitInitialisation >::This;

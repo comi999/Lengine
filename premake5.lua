@@ -11,7 +11,7 @@ local engine_folder = "Lengine"
 
 workspace "Lengine"
 	location "."
-    configurations { "DebugEditor", "ReleaseEditor", "DebugClient", "ReleaseClient" }
+    configurations { "DebugEditor", "ReleaseEditor", "DebugClient", "ReleaseClient", "ShippingClient" }
     platforms { "Win64" }
 	startproject "Template"
 	debugdir("$(OutDir)")

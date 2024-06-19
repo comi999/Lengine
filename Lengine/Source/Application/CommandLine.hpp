@@ -7,10 +7,10 @@ struct ApplicationCommandLineParser : private ISingleton< ApplicationCommandLine
 	friend class Application;
 	friend class ISingleton;
 
+	ApplicationCommandLineParser( const int32_t a_ArgC, const char** a_ArgV );
+	
 private:
 	
-	ApplicationCommandLineParser( const int32_t a_ArgC, const char** a_ArgV );
-
 	static void RunHelp();
 
 public:

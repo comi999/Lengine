@@ -174,6 +174,7 @@ function find_libraries(root)
 		create_link_info_entry("DebugEditor_Win64")
 		create_link_info_entry("ReleaseClient_Win64")
 		create_link_info_entry("ReleaseEditor_Win64")
+		create_link_info_entry("ShippingClient_Win64")
 	end
 	return library_table
 end
@@ -262,8 +263,9 @@ function add_dependencies(root, dependencies, headers_only)
 		
 		add_dependency(library_table[dependency_name], "DebugClient_Win64")
 		add_dependency(library_table[dependency_name], "DebugEditor_Win64")
+		add_dependency(library_table[dependency_name], "ReleaseClient_Win64")
 		add_dependency(library_table[dependency_name], "ReleaseEditor_Win64")
-		add_dependency(library_table[dependency_name], "ReleaseEditor_Win64")
+		add_dependency(library_table[dependency_name], "ShippingClient_Win64")
 		
 		::continue::
 	end
@@ -328,29 +330,51 @@ function create_app(name, apps_folder, engine_folder)
 	local APPLICATION_NAME = string.format("APPLICATION_NAME=\"%s\"", name)
 	local EDITOR_APPLICATION_NAME = string.format("APPLICATION_NAME=\"%s Editor\"", name)
 	local ENGINE_NAME = "ENGINE_NAME=\"Lengine\""
+	
 	local PATH_LOGS = string.format("PATH_LOGS=\"%s\"", logs_folder)
 	local PATH_ENGINE_CONFIGS = string.format("PATH_ENGINE_CONFIGS=\"%s\"", lengine_configs_folder)
 	local PATH_CONFIGS = string.format("PATH_CONFIGS=\"%s\"", app_configs_folder)
 	local PATH_ENGINE_RESOURCES = string.format("PATH_ENGINE_RESOURCES=\"%s\"", lengine_resources_folder)
 	local PATH_RESOURCES = string.format("PATH_RESOURCES=\"%s\"", app_resources_folder)
+	
 	local IMPLEMENTATION_RENDERING = "IMPLEMENTATION_RENDERING=BACKEND_OPENGL"
 	local IMPLEMENTATION_AUDIO = "IMPLEMENTATION_AUDIO=BACKEND_FMOD"
 	local IMPLEMENTATION_PHYSICS = "IMPLEMENTATION_PHYSICS=BACKEND_PHYSX"
+	
+	local function create_defines_header(defines_header, path)
+		-- Open the file in write mode
+		local file = io.open(path, "w")
+
+		-- Check if the file was successfully opened
+		if file then
+			-- Write some text to the file
+			file:write("Hello, World!\n")
+			file:write("This is a new line.\n")
+
+			-- Close the file
+			file:close()
+		else
+			-- Print an error message if the file could not be opened
+			print("Could not open file for writing: " .. path)
+		end
+	end
 	
 	defines {
 		"IS_EXE",
 		"_CRT_SECURE_NO_WARNINGS",
 		
 		ENGINE_NAME,
-		PATH_LOGS,
-		PATH_ENGINE_CONFIGS,
-		PATH_CONFIGS,
-		PATH_ENGINE_RESOURCES,
-		PATH_RESOURCES,
 		IMPLEMENTATION_RENDERING,
 		IMPLEMENTATION_AUDIO,
 		-- IMPLEMENTATION_PHYSICS
 	}
+	
+	local defines_header_debug = {}
+	defines_header_debug.PATH_LOGS = PATH_LOGS
+	defines_header_debug.PATH_ENGINE_CONFIGS = PATH_ENGINE_CONFIGS
+	defines_header_debug.PATH_CONFIGS = PATH_CONFIGS
+	defines_header_debug.PATH_ENGINE_RESOURCES = PATH_ENGINE_RESOURCES
+	defines_header_debug.PATH_RESOURCES = PATH_RESOURCES
 	
 	filter "configurations:DebugEditor"
 		symbols "On"
@@ -360,7 +384,13 @@ function create_app(name, apps_folder, engine_folder)
 			"LOGGING_LEVEL=1",
 			"ENABLE_MESSAGES",
 			EDITOR_APPLICATION_NAME,
+			PATH_LOGS,
+			PATH_ENGINE_CONFIGS,
+			PATH_CONFIGS,
+			PATH_ENGINE_RESOURCES,
+			PATH_RESOURCES,
 		}
+		create_defines_header(defines_header_debug, path.join("Generated", "Defines.hpp"))
 	
 	filter "configurations:ReleaseEditor"
 		optimize "On"
@@ -370,6 +400,11 @@ function create_app(name, apps_folder, engine_folder)
 			"LOGGING_LEVEL=1",
 			"ENABLE_MESSAGES",
 			EDITOR_APPLICATION_NAME,
+			PATH_LOGS,
+			PATH_ENGINE_CONFIGS,
+			PATH_CONFIGS,
+			PATH_ENGINE_RESOURCES,
+			PATH_RESOURCES,
 		}
 		
 	filter "configurations:DebugClient"
@@ -380,12 +415,31 @@ function create_app(name, apps_folder, engine_folder)
 			"LOGGING_LEVEL=1",
 			"ENABLE_MESSAGES",
 			APPLICATION_NAME,
+			PATH_LOGS,
+			PATH_ENGINE_CONFIGS,
+			PATH_CONFIGS,
+			PATH_ENGINE_RESOURCES,
+			PATH_RESOURCES,
 		}
 	
 	filter "configurations:ReleaseClient"
 		optimize "On"
 		defines {
 			"CONFIG_RELEASE",
+			"IS_CLIENT",
+			"LOGGING_LEVEL=3",
+			APPLICATION_NAME,
+			PATH_LOGS,
+			PATH_ENGINE_CONFIGS,
+			PATH_CONFIGS,
+			PATH_ENGINE_RESOURCES,
+			PATH_RESOURCES,
+		}
+		
+	filter "configurations:ShippingClient"
+		optimize "On"
+		defines {
+			"CONFIG_SHIPPING",
 			"IS_CLIENT",
 			"LOGGING_LEVEL=3",
 			APPLICATION_NAME,

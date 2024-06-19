@@ -1,8 +1,8 @@
 #include <Application/Application.hpp>
 #include <Application/CommandLine.hpp>
+#if IS_EDITOR
 #include <Application/Commandlet.hpp>
 
-#if IS_EDITOR
 struct CommandletCommandLineParser : CommandLineParser
 {
 	CommandletCommandLineParser()

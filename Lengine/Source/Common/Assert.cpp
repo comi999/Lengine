@@ -4,10 +4,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#if IS_WINDOWS
-	#include <intrin.h>
-#endif
-
 #if CONFIG_DEBUG || CONFIG_RELEASE
 int32_t Format( char* a_Buffer, const size_t a_BufferLength, const char* a_FormatString, va_list a_Inputs )
 {
